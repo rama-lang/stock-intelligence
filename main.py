@@ -37,7 +37,7 @@ def home():
     for sector, stocks in SECTORS.items():
         cards = "".join([f'<div style="background:white; padding:15px; border:1px solid #ddd; border-radius:10px; cursor:pointer; margin:5px; display:inline-block;" onclick="window.location=\'/stock/{s}\'"><b>{s.replace(".NS","")}</b></div>' for s in stocks])
         sector_html += f'<div><h3>{sector}</h3>{cards}</div>'
-    return f"<html><head>{COMMON_STYLE}</head><body><div class='container'><h1>📊 AI Stock Analyzer v25</h1>{sector_html}</div></body></html>"
+    return f"<html><head>{COMMON_STYLE}</head><body><div class='container'><h1>📊 AI Stock Analyzer </h1>{sector_html}</div></body></html>"
 
 @app.get("/stock/{{symbol}}".replace("{{", "{").replace("}}", "}"), response_class=HTMLResponse)
 def stock_detail(symbol: str):
