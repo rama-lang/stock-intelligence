@@ -29,3 +29,14 @@ jobs:
       run: |-
         docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}" .
         docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}"
+
+    - name: Update K8s Manifest
+      run: |-
+        # ఇది k8s-deploy.yaml లో ఉన్న పాత ట్యాగ్‌ని కొత్త SHA తో మారుస్తుంది
+        sed -i "s|image:.*|image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}|g" k8s-deploy.yaml
+        
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "github-actions"
+        git add k8s-deploy.yaml
+        git commit -m "🚀 Update image to ${{ github.sha }} [skip ci]"
+        git push
