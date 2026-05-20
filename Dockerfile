@@ -1,18 +1,19 @@
-# 1. తక్కువ వల్నరబిలిటీస్ ఉండేలా లేటెస్ట్ స్లిమ్ ఇమేజ్ వాడుతున్నాం
-FROM python:3.11-slim-bookworm
+FROM python:3.11-alpine
 
-# 2. అప్లికేషన్ ఫోల్డర్ సెటప్
+# Alpine లో సిస్టమ్ అప్‌డేట్ మరియు క్లీన్ అప్
+RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
+
 WORKDIR /app
 
-# 3. Layer Caching కోసం ముందుగా requirements ని కాపీ చేస్తున్నాం
-# దీనివల్ల ప్రతిసారీ pip install రన్ అవ్వదు, బిల్డ్ టైమ్ తగ్గుతుంది
+# 1. ముందస్తుగా pip, setuptools మరియు wheel ని అప్‌గ్రేడ్ చేయండి
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# requirements కాపీ చేసి ఇన్‌స్టాల్ చేయండి
 COPY requirements.txt .
 
-# 4. అనవసరమైన ఫైల్స్ లేకుండా ఇన్‌స్టాల్ చేయడం
-RUN pip install --no-cache-dir -r requirements.txt
+# 2. Binary ఫైల్స్ మాత్రమే వాడమని ఫోర్స్ చేస్తూ ఇన్‌స్టాల్ చేయండి
+RUN pip install --no-cache-dir --only-binary=:all: -r requirements.txt
 
-# 5. ఇప్పుడు కోడ్‌ని కాపీ చేస్తున్నాం (.dockerignore ఇక్కడ పనిచేస్తుంది)
 COPY . .
 
-# 6. అప్లికేషన్ రన్ చేయడం (Port 80 కి మార్చాను, మీ Kubernetes సర్వీస్ 80 మీద ఉంది కాబట్టి)
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
