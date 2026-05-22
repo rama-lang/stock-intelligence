@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: stock-container
-        image: us-central1-docker.pkg.dev/grow-info-service/grow-repo/stock-app:6cf2ecfc1d3696da8f0f239cd1e147cc178b598f
+        image: us-central1-docker.pkg.dev/grow-info-service/grow-repo/stock-app:9130b692a57bcd4434ae497b16191b8b2755df75
         ports:
         - containerPort: 8080
 ---
